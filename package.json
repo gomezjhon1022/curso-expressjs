@@ -1,0 +1,19 @@
+{
+  "name": "curso-expressjs",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"node --watch app.js"
+  },
+  "keywords": [],
+  "author": "Jhon Gomez <jhonnson1945@gmail.com>",
+  "license": "MIT",
+  "description": "Course expressjs",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
