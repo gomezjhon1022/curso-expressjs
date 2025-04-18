@@ -28,6 +28,31 @@ app.get('/search', (req,res)=>{
     `)
 })
 
+app.post('/form', (req, res) => {
+  const name = req.body.name || 'User 1';
+  const email =  req.body.email || 'Not provided';
+  res.json({
+    message: 'Received data',
+    data: {
+      name,
+      email
+    }
+  })
+})
+
+app.post('/api/data', (req,res)=> {
+  const data = req.body;
+
+  if (!data || Object.keys(data).length===0) {
+    return res.status(400).json({error: 'No JSON data received'})
+  }
+
+  res.status(201).json({
+    message: 'JSON data received',
+    data: req.body
+  })
+})
+
 app.listen(PORT, () => {
   console.log(`Example app listening on: http://localhost:${PORT}`);
 })
