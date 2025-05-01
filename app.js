@@ -1,7 +1,13 @@
 const express = require('express');
 const app = express();
+const { validateUser } = require('./utils/validation')
 
 const PORT = process.env.PORT | 3000;
+
+const fs = require('fs');
+const path = require('path');
+
+const usersFilePath = path.join(__dirname, 'users.json');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true} ));
@@ -52,6 +58,84 @@ app.post('/api/data', (req,res)=> {
     data: req.body
   })
 })
+
+app.get('/users', (req,res)=>{
+  fs.readFile(usersFilePath, 'utf-8', (err, data)=>{
+    if (err) {
+      return res.status(500).json({
+        error: 'Data connection error'
+      })
+    }
+    const users= JSON.parse(data);
+    res.json(users);
+  })
+})
+
+app.post('/users', (req,res)=> {
+  const newUser = req.body;
+  fs.readFile(usersFilePath, 'utf-8', (err, data)=>{
+    if (err) {
+      return res.status(500).json({error: 'Data connection error'})
+    }
+    const users = JSON.parse(data);
+
+    const validation = validateUser(newUser, users);
+    if (!validation.isValid) {
+      return res.status(400).json({error:validation.error});
+    }
+
+    users.push(newUser);
+    fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err)=> {
+      if (err) {
+        return res.status(500).json({error: 'Error saving the user'})
+      }
+      res.status(201).json(newUser);
+    })
+  })
+})
+
+app.put('/users/:id', (req,res)=> {
+  const userId= parseInt(req.params.id, 10);
+  const updatedUser = req.body;
+
+  fs.readFile(usersFilePath, 'utf8', (err, data)=>{
+    if (err) {
+      return res.status(500).json({error: 'Data connection error'})
+    }
+    let users = JSON.parse(data);
+
+    const validation = validateUser(updatedUser, users, true);
+    if (!validation.isValid) {
+      return res.status(400).json({error: validation.error});
+    }
+
+    users =users.map(user=>
+      user.id===userId?{...user, ...updatedUser}:user);
+      fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err)=>{
+        if (err) {
+          return res.status(500).json({error:'Error updating the user'})
+        }
+        res.json(updatedUser);
+      })
+  });
+})
+
+app.delete('/users/:id', (req, res) => {
+  const userId= parseInt(req.params.id, 10);
+  fs.readFile(usersFilePath, 'utf8', (err,data)=> {
+    if (err) {
+      return res.status(500).json({error: 'Data connection error'});
+    }
+    let users=JSON.parse(data);
+    users= users.filter(user=> user.id !== userId)
+    fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err)=>{
+      if (err) {
+        return res.status(500).json({error: 'Error deleting user'})
+      }
+      res.status(204).send();
+    })
+  })
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on: http://localhost:${PORT}`);
