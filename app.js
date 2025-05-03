@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const { validateUser } = require('./utils/validation')
+
+const LoggerMiddleware = require('./middlewares/logger');
+const { validateUser } = require('./utils/validation');
 
 const PORT = process.env.PORT | 3000;
 
@@ -11,6 +13,7 @@ const usersFilePath = path.join(__dirname, 'users.json');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true} ));
+app.use(LoggerMiddleware);
 
 app.get('/', (req,res)=>{
   res.send(`
