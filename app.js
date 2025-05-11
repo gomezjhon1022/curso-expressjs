@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 
 const LoggerMiddleware = require('./middlewares/logger');
+const errorHandler = require('./middlewares/errorHandler')
 const { validateUser } = require('./utils/validation');
 
 const PORT = process.env.PORT | 3000;
@@ -14,6 +15,7 @@ const usersFilePath = path.join(__dirname, 'users.json');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true} ));
 app.use(LoggerMiddleware);
+app.use(errorHandler);
 
 app.get('/', (req,res)=>{
   res.send(`
@@ -139,6 +141,10 @@ app.delete('/users/:id', (req, res) => {
     })
   })
 });
+
+app.get('/error',(req, res, next)=>{
+  next(new Error('Intentional error'));
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on: http://localhost:${PORT}`);
