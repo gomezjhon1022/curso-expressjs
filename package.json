@@ -4,17 +4,20 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"node --env-file .env --watch app.js",
-    "start":"node app.js"
+    "dev": "node --env-file .env --watch app.js",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "Jhon Gomez <jhonnson1945@gmail.com>",
   "license": "MIT",
   "description": "Course expressjs",
   "dependencies": {
-    "express": "^5.1.0"
+    "@prisma/client": "^6.7.0",
+    "express": "^5.1.0",
+    "pg": "^8.15.6"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prisma": "^6.7.0"
   }
 }

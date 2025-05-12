@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const LoggerMiddleware = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler')
@@ -144,6 +146,15 @@ app.delete('/users/:id', (req, res) => {
 
 app.get('/error',(req, res, next)=>{
   next(new Error('Intentional error'));
+})
+
+app.get('/db-users', async (req,res)=> {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch(error) {
+    res.status(500).json({error: "Database connection error. Unable to establish communication with the server"})
+  }
 })
 
 app.listen(PORT, () => {
