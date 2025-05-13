@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 const LoggerMiddleware = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler')
 const { validateUser } = require('./utils/validation');
+const authenticateToken = require('./middlewares/auth');
 
 const PORT = process.env.PORT | 3000;
 
@@ -155,6 +156,10 @@ app.get('/db-users', async (req,res)=> {
   } catch(error) {
     res.status(500).json({error: "Database connection error. Unable to establish communication with the server"})
   }
+})
+
+app.get('/protected-route', authenticateToken, (req, res)=> {
+  res.send('Protected route.');
 })
 
 app.listen(PORT, () => {
