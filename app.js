@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const LoggerMiddleware = require('./middlewares/logger');
 const errorHandler = require('./middlewares/errorHandler')
@@ -160,6 +162,21 @@ app.get('/db-users', async (req,res)=> {
 
 app.get('/protected-route', authenticateToken, (req, res)=> {
   res.send('Protected route.');
+})
+
+app.post('/register', async (req,res)=>{
+  const { email, password, name } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await prisma.user.create({
+    data: {
+      email,
+      password: hashedPassword,
+      name,
+      role: 'USER'
+    }
+  });
+  res.status(201).json({message: 'User registered succesfully'})
 })
 
 app.listen(PORT, () => {
