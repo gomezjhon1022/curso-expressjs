@@ -179,6 +179,20 @@ app.post('/register', async (req,res)=>{
   res.status(201).json({message: 'User registered succesfully'})
 })
 
+app.post("/login",async (req, res)=>{
+  const { email, password }= req.body;
+  const user = await prisma.user.findUnique({where: {email}});
+
+  if (!user) return res.status(400).json({error: 'Invalid email or password'})
+  const validPassword = await bcrypt.compare(password, user.password);
+
+  if (!validPassword) return res.status(400).json({error: 'Invalid email or password'});
+  
+  const token = jwt.sign({id: user.id, role: user.role}, process.env.JWT_SECRET, {expiresIn:'1h'});
+
+  res.json({ token });
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on: http://localhost:${PORT}`);
 })
