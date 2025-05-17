@@ -1,8 +1,12 @@
 const { Router } = require('express');
-const { createTimeBlocks, listReservations } = require('../controllers/adminController');
+const { createTimeBlock, listReservations } = require('../controllers/adminController');
+const authenticateToken = require('../middlewares/auth');
 
 const router = Router();
 
-router.post('time-blocks', createTimeBlocks);
-router.get('/reservations', listReservations);
+router.post('/time-block',authenticateToken, createTimeBlock);
+router.get('/reservations',authenticateToken, listReservations);
 
+
+
+module.exports = router;

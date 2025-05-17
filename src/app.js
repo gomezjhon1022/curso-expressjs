@@ -10,3 +10,6 @@ app.use('/api',routes);
 app.get('/', (req,res)=>{
   res.send('App workiing...');
 })
+
+
+module.exports = app;

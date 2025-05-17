@@ -1,4 +1,4 @@
-const { createTimeBlockService, listreservationsService } = require('../services/adminService');
+const { createTimeBlockService, listReservationService } = require('../services/adminService');
 
 const createTimeBlock = async(req, res) => {
   if(req.user.role !== 'ADMIN') {
@@ -21,7 +21,7 @@ const listReservations = async (req, res) => {
   }
   
   try {
-    const reservations = await listreservationsService();
+    const reservations = await listReservationService();
     res.json(reservations);
   } catch(error ) {
     res.status(500).jsonz({error: 'Error creating time block'});
